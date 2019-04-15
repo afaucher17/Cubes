@@ -42,11 +42,10 @@ namespace Cubes
 
         private void Start()
         {
-            if (_targetPooler == null)
-                _targetPooler = GetComponentInChildren<GameObjectPooler>();
             if (_camera == null)
                 _camera = Camera.main;
             _previousSpawnTime = Time.time;
+            _targetPooler.Init();
         }
 
         /// <summary>
@@ -55,9 +54,9 @@ namespace Cubes
         /// <returns>True if a target has been successfully reused from the pool.</returns>
         public bool SpawnTarget()
         {
-            if (_targetPooler)
+            if (_targetPooler != null)
             {
-                GameObject go = _targetPooler.GetPooledObject();
+                PoolableObject go = _targetPooler.GetPooledObject();
                 if (go != null)
                 {
                     float x = Random.Range(_rect.min.x, _rect.max.x);

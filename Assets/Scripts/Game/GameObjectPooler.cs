@@ -1,34 +1,36 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace Cubes
 {
     /// <summary>
-    /// Creates a pool of GameObject that can be reused to prevent too many expensive calls to the Garbage Collector.
+    /// Creates a pool of PoolableObject that can be reused to prevent too many expensive calls to the Garbage Collector.
     /// </summary>
-    public class GameObjectPooler : MonoBehaviour
+    [Serializable]
+    public class GameObjectPooler
     {
         [Header("Pooler Settings")]
         [SerializeField]
-        [Tooltip("Prefab of the GameObject used by this instance of GameObjectPooler.")]
-        private GameObject _prefab = null;
+        [Tooltip("Prefab of the PoolableObject used by this instance of PoolableObjectPooler.")]
+        private PoolableObject _prefab = null;
         [SerializeField]
-        [Tooltip("The size of the pool of GameObjects that will be used and re-used by this instance of GameObjectPooler.")]
+        [Tooltip("The size of the pool of PoolableObjects that will be used and re-used by this instance of PoolableObjectPooler.")]
         private int _poolSize = 20;
         [SerializeField]
-        [Tooltip("If true, when an instance of the stored GameObject is requested but no instance if available, a new instance of the stored GameObject will be created instead.")]
+        [Tooltip("If true, when an instance of the stored PoolableObject is requested but no instance if available, a new instance of the stored PoolableObject will be created instead.")]
         private bool _expandable = false;
         [SerializeField]
-        [Tooltip("If this field is set, the pooled GameObject will be instantiated as children of the given transform.")]
+        [Tooltip("If this field is set, the pooled PoolableObject will be instantiated as children of the given transform.")]
         private Transform _poolTransform = null;
 
-        private List<GameObject> _pooledObjects;
+        private List<PoolableObject> _pooledObjects;
         /// <summary>
-        /// Prefab of the GameObject used by this instance of GameObjectPooler.
-        /// This GameObject will be cloned an amount of times defined in the PoolSize property.
+        /// Prefab of the PoolableObject used by this instance of PoolableObjectPooler.
+        /// This PoolableObject will be cloned an amount of times defined in the PoolSize property.
         /// </summary>
-        public GameObject Prefab
+        public PoolableObject Prefab
         {
             get
             {
@@ -36,7 +38,7 @@ namespace Cubes
             }
         }
         /// <summary>
-        /// The size of the pool of GameObjects that will be used and re-used by this instance of GameObjectPooler.
+        /// The size of the pool of PoolableObjects that will be used and re-used by this instance of PoolableObjectPooler.
         /// </summary>
         public int PoolSize
         {
@@ -46,8 +48,8 @@ namespace Cubes
             }
         }
         /// <summary>
-        /// If true, when an instance of the stored GameObject is requested but no instance if available,
-        /// a new instance of the stored GameObject will be created instead.
+        /// If true, when an instance of the stored PoolableObject is requested but no instance if available,
+        /// a new instance of the stored PoolableObject will be created instead.
         /// </summary>
         public bool Expandable
         {
@@ -57,43 +59,43 @@ namespace Cubes
             }
         }
 
-        private void Start()
+        public void Init()
         {
-            Init();
-        }
-
-        private void Init()
-        {
-            _pooledObjects = new List<GameObject>();
+            _pooledObjects = new List<PoolableObject>();
             for (int i = 0; i < _poolSize; i++)
             {
-                GameObject go = Instantiate(_prefab, _poolTransform);
-                go.gameObject.name += " " + i;
-                go.SetActive(false);
+                PoolableObject go = Instantiate(_prefab, _poolTransform);
+                go.name += " " + i;
+                go.Available = false;
                 _pooledObjects.Add(go);
             }
         }
 
+        private PoolableObject Instantiate(PoolableObject prefab, Transform transform = null)
+        {
+            return UnityEngine.Object.Instantiate(prefab, transform);
+        }
+
         /// <summary>
-        /// Gets the first inactive GameObject in the pool.
+        /// Gets the first inactive PoolableObject in the pool.
         /// </summary>
-        /// <returns>The first inactive GameObject in the pool, null if there's no inactive GameObject and the Expandable property is set to false.</returns>
-        public GameObject GetPooledObject()
+        /// <returns>The first inactive PoolableObject in the pool, null if there's no inactive PoolableObject and the Expandable property is set to false.</returns>
+        public PoolableObject GetPooledObject()
         {
             for (int i = 0; i < _pooledObjects.Count; i++)
             {
-                GameObject go = _pooledObjects[i];
-                if (!go.activeInHierarchy)
+                PoolableObject go = _pooledObjects[i];
+                if (!go.Available)
                 {
-                    go.SetActive(true);
+                    go.Available = true;
                     return go;
                 }
             }
             if (_expandable)
             {
-                GameObject go = Instantiate(_prefab, _poolTransform);
+                PoolableObject go = Instantiate(_prefab, _poolTransform);
                 go.name += " " + _pooledObjects.Count;
-                go.SetActive(false);
+                go.Available = false;
                 _pooledObjects.Add(go);
             }
             return null;

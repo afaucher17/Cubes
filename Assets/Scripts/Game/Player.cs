@@ -35,7 +35,7 @@ namespace Cubes
             {
                 if (hit.collider.tag == "Target")
                 {
-                    hit.collider.gameObject.SetActive(false);
+                    hit.collider.GetComponent<Target>().Hit();
                     GameManager.Instance.ScorePoints(hit.distance);
                 }
             }

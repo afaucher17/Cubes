@@ -668,7 +668,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1993128906}
-  - component: {fileID: 1993128908}
   - component: {fileID: 1993128907}
   m_Layer: 0
   m_Name: TargetSpawner
@@ -703,7 +702,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b77a5b36e98efe4f8edce9ba2c617b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _targetPooler: {fileID: 1993128908}
+  _targetPooler:
+    _prefab: {fileID: 6298368508350442971, guid: fc1f79444d66945428f2023c012e14d9,
+      type: 3}
+    _poolSize: 20
+    _expandable: 1
+    _poolTransform: {fileID: 1993128906}
   _camera: {fileID: 534669904}
   _rect:
     serializedVersion: 2
@@ -715,19 +719,3 @@ MonoBehaviour:
   _maxZ: 20
   _spawnRate: 20
   _targetLimit: 1000
---- !u!114 &1993128908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1993128905}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5d350b9a38772b41b8201002e486d8c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _prefab: {fileID: 3797984666517486948, guid: fc1f79444d66945428f2023c012e14d9, type: 3}
-  _poolSize: 20
-  _expandable: 1
-  _poolTransform: {fileID: 1993128906}

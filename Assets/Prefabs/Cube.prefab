@@ -104,3 +104,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e97fc59172c68e741a7a4bc794a8b32c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _fallSpeed: 7
+  _hitAnimationDuration: 0.25
